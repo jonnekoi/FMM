@@ -16,6 +16,8 @@ const postLogin = async (req, res) => {
     expiresIn: "24h",
   });
   res.json({ user: user, token });
+  console.log(user);
 };
+
 
 export { postLogin }

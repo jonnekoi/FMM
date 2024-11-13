@@ -6,7 +6,8 @@ import {
   addUser,
   isUsernameAvailable,
   listAllUsers,
-  updateUser
+  updateUser,
+  listAllPoints
 } from '../models/userModel.js';
 
 const registerUser = async (req, res) => {
@@ -65,4 +66,12 @@ const modifyUser = async (req, res) => {
   }
 };
 
-export { registerUser, getAllUsers, modifyUser };
+const getAllPoints = async (req, res) => {
+  try {
+    res.json(await listAllPoints());
+  } catch (error){
+    console.log(error);
+  }
+}
+
+export { registerUser, getAllUsers, modifyUser, getAllPoints };

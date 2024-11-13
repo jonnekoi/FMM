@@ -52,4 +52,13 @@ const updateUser = async (id, body, user) => {
   return { message: "Success" };
 };
 
-export { listAllUsers, addUser, isUsernameAvailable, getUserByUsername, updateUser };
+const listAllPoints = async () => {
+  const [rows] = await promisePool.query(`
+    SELECT users.id AS user_id, users.username, points.points
+    FROM users
+    LEFT JOIN points ON users.id = points.user_id
+  `);
+  return rows;
+};
+
+export { listAllUsers, addUser, isUsernameAvailable, getUserByUsername, updateUser, listAllPoints };

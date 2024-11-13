@@ -8,6 +8,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/v1", api);
+app.use("/v1/matches", api);
 app.get("/", (req, res) => {
   res.send("fmm server");
 });

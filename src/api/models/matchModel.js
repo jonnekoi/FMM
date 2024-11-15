@@ -9,4 +9,17 @@ const fetchMatches = async () => {
   }
 }
 
-export { fetchMatches };
+
+const postMatch = async (match) => {
+  try {
+    const { matchday, home_team, away_team } = match;
+    const sql = `INSERT INTO matches (matchday, home_team, away_team) VALUES (?, ?, ?)`;
+    const params = [matchday, home_team, away_team];
+    const [result] = await promisePool.execute(sql, params);
+    return { id: result.insertId };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export { fetchMatches, postMatch };

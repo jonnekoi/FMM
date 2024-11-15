@@ -4,6 +4,7 @@ import "dotenv";
 import {
   addMatch,
   getMatches,
+  getSingleMatch
 } from '../controllers/matchController.js';
 import authToken from '../../middlewares.js';
 
@@ -18,5 +19,6 @@ const isAdmin = (req, res, next) => {
 }
 
 matchRouter.route('/').get(getMatches).post(authToken, isAdmin, addMatch);
+matchRouter.route('/:id').get(authToken, getSingleMatch);
 
 export default matchRouter;

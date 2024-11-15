@@ -22,4 +22,13 @@ const postMatch = async (match) => {
   }
 }
 
-export { fetchMatches, postMatch };
+const fetchMatch = async (id) => {
+  try {
+    const [rows] = await promisePool.query(`SELECT * FROM matches WHERE id = ?`, [id]);
+    return rows[0];
+  } catch (error) {
+    console.error('Error fetching match:', error);
+  }
+}
+
+export { fetchMatches, postMatch, fetchMatch };

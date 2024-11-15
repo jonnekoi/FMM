@@ -1,4 +1,4 @@
-import {fetchMatches, postMatch} from '../models/matchModel.js';
+import {fetchMatches, postMatch, fetchMatch} from '../models/matchModel.js';
 
 const getMatches = async (req, res) => {
   try {
@@ -25,4 +25,14 @@ const addMatch = async (req, res) => {
   }
 }
 
-export { getMatches, addMatch };
+const getSingleMatch = async (req, res) => {
+  try {
+    const match = await fetchMatch(req.params.id);
+    res.status(200).json(match);
+  } catch (error) {
+    console.error('Error fetching match:', error);
+    res.status(500).json({ message: 'Failed to fetch match' });
+  }
+}
+
+export { getMatches, addMatch, getSingleMatch };

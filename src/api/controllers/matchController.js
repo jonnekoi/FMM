@@ -44,9 +44,7 @@ const addGuess = async (req, res) => {
     };
 
     const matchStarted = await fetchMatch(req.params.id);
-    console.log("ALKANUU",matchStarted);
     const matchtime = matchStarted.matchday;
-    console.log(matchtime);
     const currentTime = new Date();
     if (currentTime > matchtime) {
       res.status(403).json({ message: 'Match has already started' });

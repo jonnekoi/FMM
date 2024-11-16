@@ -62,7 +62,6 @@ const addGuess = async (req, res) => {
 const getUserGuess = async (req, res) => {
   try {
     const guess = await fetchUserGuess(req.params.id, req.params.userId);
-    console.log(guess);
     res.status(200).json(guess);
   } catch (error) {
     console.error('Error fetching guess:', error);

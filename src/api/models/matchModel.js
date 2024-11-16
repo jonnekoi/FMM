@@ -59,7 +59,6 @@ const postGuess = async (guessData) => {
 const fetchUserGuess = async (matchId, userId) => {
   try {
     const [rows] = await promisePool.query(`SELECT * FROM matchguesses WHERE match_id = ? AND user_id = ?`, [matchId, userId]);
-    console.log(rows);
     return rows;
   } catch (error) {
     console.error('Error fetching user guess:', error);

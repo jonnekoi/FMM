@@ -36,7 +36,6 @@ create table matches
 (
     id         int auto_increment
         primary key,
-    match_id   varchar(255) not null,
     matchday   datetime     not null,
     home_team  varchar(255) not null,
     away_team  varchar(255) not null,
@@ -54,6 +53,25 @@ create table users
     access   text null,
     email    text null
 );
+
+create table matchguesses
+(
+    guess_id int auto_increment
+        primary key,
+    user_id  int        null,
+    match_id int        null,
+    guess    varchar(5) null,
+    constraint matchguesses_ibfk_1
+        foreign key (user_id) references users (id),
+    constraint matchguesses_ibfk_2
+        foreign key (match_id) references matches (id)
+);
+
+create index match_id
+    on matchguesses (match_id);
+
+create index user_id
+    on matchguesses (user_id);
 
 create table points
 (

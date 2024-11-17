@@ -41,6 +41,7 @@ const addGuess = async (req, res) => {
       match_id: req.params.id,
       user_id: res.locals.user.id,
       guess: req.body.guess,
+      scorer: req.body.scorer,
     };
 
     const matchStarted = await fetchMatch(req.params.id);

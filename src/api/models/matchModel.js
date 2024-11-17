@@ -60,21 +60,20 @@ const fetchMatch = async (id) => {
 
 const postGuess = async (guessData) => {
   try {
-    const { user_id, match_id, guess } = guessData;
+    const { user_id, match_id, guess, scorer } = guessData;
     const [existingRows] = await promisePool.query(
         `SELECT * FROM matchguesses WHERE user_id = ? AND match_id = ?`,
         [user_id, match_id]
     );
 
     if (existingRows.length > 0) {
-      const updateSql = `UPDATE matchguesses SET guess = ? WHERE user_id = ? AND match_id = ?`;
-      const updateParams = [guess, user_id, match_id];
+      const updateSql = `UPDATE matchguesses SET guess = ?, scorer = ? WHERE user_id = ? AND match_id = ?`;
+      const updateParams = [guess, scorer, user_id, match_id];
       await promisePool.execute(updateSql, updateParams);
       return { message: 'Guess updated successfully' };
     } else {
-
-      const insertSql = `INSERT INTO matchguesses (user_id, match_id, guess) VALUES (?, ?, ?)`;
-      const insertParams = [user_id, match_id, guess];
+      const insertSql = `INSERT INTO matchguesses (user_id, match_id, guess, scorer) VALUES (?, ?, ?, ?)`;
+      const insertParams = [user_id, match_id, guess, scorer];
       const [result] = await promisePool.execute(insertSql, insertParams);
       return { guess_id: result.insertId };
     }

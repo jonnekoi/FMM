@@ -2,12 +2,25 @@ import promisePool from '../../utils/database.js';
 
 const fetchMatches = async () => {
   try {
-    const [rows] = await promisePool.query(`SELECT id, matchday, home_team, away_team, home_score, away_score FROM matches`);
+    const query = `
+      SELECT 
+        m.id, 
+        m.matchday, 
+        ht.team_name AS home_team, 
+        at.team_name AS away_team, 
+        m.home_score, 
+        m.away_score
+      FROM matches m
+      JOIN teams ht ON m.home_team = ht.id
+      JOIN teams at ON m.away_team = at.id
+    `;
+    const [rows] = await promisePool.query(query);
     return rows;
   } catch (error) {
     console.error('Error fetching matches:', error);
   }
-}
+};
+
 
 
 const postMatch = async (match) => {
@@ -24,12 +37,26 @@ const postMatch = async (match) => {
 
 const fetchMatch = async (id) => {
   try {
-    const [rows] = await promisePool.query(`SELECT * FROM matches WHERE id = ?`, [id]);
+    const query = `
+      SELECT 
+        m.id, 
+        m.matchday, 
+        ht.team_name AS home_team, 
+        at.team_name AS away_team, 
+        m.home_score, 
+        m.away_score
+      FROM matches m
+      JOIN teams ht ON m.home_team = ht.id
+      JOIN teams at ON m.away_team = at.id
+      WHERE m.id = ?
+    `;
+    const [rows] = await promisePool.query(query, [id]);
     return rows[0];
   } catch (error) {
     console.error('Error fetching match:', error);
   }
-}
+};
+
 
 const postGuess = async (guessData) => {
   try {

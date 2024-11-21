@@ -32,15 +32,36 @@ use fmm;
 
 **3. Create needed tables**
 ```sh
+create table teams
+(
+    id        int auto_increment
+        primary key,
+    team_name varchar(255) not null
+);
+
 create table matches
 (
     id         int auto_increment
         primary key,
-    matchday   datetime     not null,
-    home_team  varchar(255) not null,
-    away_team  varchar(255) not null,
-    home_score int          null,
-    away_score int          null
+    matchday   datetime not null,
+    home_team  int      not null,
+    away_team  int      not null,
+    home_score int      null,
+    away_score int      null,
+    constraint matches_ibfk_1
+        foreign key (home_team) references teams (id),
+    constraint matches_ibfk_2
+        foreign key (away_team) references teams (id)
+);
+
+create table players
+(
+    id      int auto_increment
+        primary key,
+    name    varchar(255) not null,
+    team_id int          not null,
+    constraint players_ibfk_1
+        foreign key (team_id) references teams (id)
 );
 
 create table users
@@ -61,6 +82,7 @@ create table matchguesses
     user_id  int        null,
     match_id int        null,
     guess    varchar(5) null,
+    scorer   int        null,
     constraint matchguesses_ibfk_1
         foreign key (user_id) references users (id),
     constraint matchguesses_ibfk_2
@@ -85,6 +107,8 @@ create table points
 
 create index user_id
     on points (user_id);
+
+
 ```
 **4. Create .env file**
 

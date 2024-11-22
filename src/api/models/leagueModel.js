@@ -18,10 +18,10 @@ const postLeague = async (data) => {
   }
 
   try {
-    const { name, isPublic, owner, maxPlayers, desci } = data;
+    const { name, isPublic, owner, maxPlayers, desci, StartDate, EndDate } = data;
     const leagueKey = data.isPublic === 1 ? null : data.leagueKey;
-    const sql = `INSERT INTO leagues (name, isPublic, owner, maxPlayers, leagueKey, desci) VALUES (?, ?, ?, ?, ?, ?)`;
-    const params = [name, isPublic, owner, maxPlayers, leagueKey, desci];
+    const sql = `INSERT INTO leagues (name, isPublic, owner, maxPlayers, leagueKey, desci, StartDate, EndDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const params = [name, isPublic, owner, maxPlayers, leagueKey, desci, StartDate, EndDate];
     const [result] = await promisePool.execute(sql, params);
     const leagueId = result.insertId;
     const userLeagueSql = `INSERT INTO userleagues (user_id, league_id) VALUES (?, ?)`;
@@ -105,6 +105,30 @@ const getLeagueByCode = async (code) => {
   }
 }
 
+const fetchLeagueData = async (leagueId) => {
+  try {
+    const sql = `SELECT leagues.name, leagues.isPublic, owner.username AS owner_username, leagues.maxPlayers, leagues.desci, leagues.StartDate, leagues.EndDate,
+                    JSON_ARRAYAGG(JSON_OBJECT('id', users.id, 'name', users.username, 'points', IFNULL(points.points, 0))) AS league_users,
+                    (SELECT JSON_ARRAYAGG(JSON_OBJECT('match_id', matches.id, 'matchday', matches.matchday, 'home_team', home_team.team_name, 'away_team', away_team.team_name, 'home_score', matches.home_score, 'away_score', matches.away_score))
+                     FROM matches
+                     LEFT JOIN teams AS home_team ON matches.home_team = home_team.id
+                     LEFT JOIN teams AS away_team ON matches.away_team = away_team.id
+                     WHERE matches.matchday > leagues.StartDate) AS league_matches
+                     FROM leagues
+                     JOIN users AS owner ON leagues.owner = owner.id
+                     JOIN userleagues ON leagues.id = userleagues.league_id
+                     JOIN users ON userleagues.user_id = users.id
+                     LEFT JOIN points ON users.id = points.user_id AND leagues.id = points.league_id
+                     WHERE leagues.id = ?
+                     GROUP BY leagues.id, owner.username`;
+    const [result] = await promisePool.execute(sql, [leagueId]);
+    return result[0];
+  } catch (error) {
+    console.log(error);
+  }
 
-export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague};
+}
+
+
+export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData};
 

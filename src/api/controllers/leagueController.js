@@ -1,10 +1,21 @@
 import {
   postLeague,
   fetchUserLeagues,
-  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague
+  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData
 } from '../models/leagueModel.js';
 
 const addLeague = async (req, res) => {
+  const startDate = new Date();
+  const duration = parseInt(req.body.duration, 10);
+  const allowedDurations = [7, 30, 60, 120, 365];
+
+  if (!allowedDurations.includes(duration)) {
+    return res.status(400).json({ message: 'Invalid duration' });
+  }
+
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + duration);
+
   if (req.body.isPublic === 'true') {
     req.body.isPublic = 1;
   } else {
@@ -17,7 +28,9 @@ const addLeague = async (req, res) => {
       isPublic: req.body.isPublic,
       owner: res.locals.user.id,
       maxPlayers: req.body.maxPlayers,
-      desci: req.body.desci
+      desci: req.body.desci,
+      StartDate: startDate,
+      EndDate: endDate
     };
 
     if (req.body.isPublic !== 1) {
@@ -102,4 +115,16 @@ const getPublicLeagues = async (req, res) => {
   }
 }
 
-export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague};
+const getLeagueData = async (req, res) => {
+  try {
+    const league = await fetchLeagueData(req.params.id);
+    league.league_users = JSON.parse(league.league_users);
+    league.league_matches = JSON.parse(league.league_matches);
+    res.status(200).json(league);
+  } catch (error) {
+    console.error('Error fetching league data:', error);
+    res.status(500).json({ message: 'Failed to fetch league data' });
+  }
+}
+
+export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague, getLeagueData};

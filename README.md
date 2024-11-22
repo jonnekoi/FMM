@@ -14,7 +14,7 @@ npm install
 **3. Follow the steps and create database
 After database start the app
 ```sh
-npm run dev
+npm run nodemon
 ```
 
 

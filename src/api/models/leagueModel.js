@@ -18,10 +18,10 @@ const postLeague = async (data) => {
   }
 
   try {
-    const { name, isPublic, owner, maxPlayers } = data;
+    const { name, isPublic, owner, maxPlayers, desci } = data;
     const leagueKey = data.isPublic === 1 ? null : data.leagueKey;
-    const sql = `INSERT INTO leagues (name, isPublic, owner, maxPlayers, leagueKey) VALUES (?, ?, ?, ?, ?)`;
-    const params = [name, isPublic, owner, maxPlayers, leagueKey];
+    const sql = `INSERT INTO leagues (name, isPublic, owner, maxPlayers, leagueKey, desci) VALUES (?, ?, ?, ?, ?, ?)`;
+    const params = [name, isPublic, owner, maxPlayers, leagueKey, desci];
     const [result] = await promisePool.execute(sql, params);
     const leagueId = result.insertId;
     const userLeagueSql = `INSERT INTO userleagues (user_id, league_id) VALUES (?, ?)`;
@@ -35,7 +35,7 @@ const postLeague = async (data) => {
 
 const fetchUserLeagues = async (user) => {
   try {
-    const sql = `SELECT leagues.id, leagues.name, users.username AS owner_username, leagues.maxPlayers 
+    const sql = `SELECT leagues.id, leagues.name, leagues.desci, users.username AS owner_username, leagues.maxPlayers 
                         FROM leagues
                         JOIN userLeagues ON leagues.id = userLeagues.league_id
                         JOIN users ON leagues.owner = users.id
@@ -44,6 +44,19 @@ const fetchUserLeagues = async (user) => {
     return result;
   } catch (error) {
     console.log("tässä" + error);
+  }
+}
+
+const fetchPublicLeagues = async () => {
+  try {
+    const sql = `SELECT leagues.id, leagues.name, leagues.desci, users.username AS owner_username, leagues.maxPlayers
+                        FROM leagues
+                        JOIN users ON leagues.owner = users.id
+                        WHERE leagues.isPublic = 1;`;
+    const [result] = await promisePool.execute(sql);
+    return result;
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -81,5 +94,5 @@ const getLeagueByCode = async (code) => {
 }
 
 
-export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague};
+export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues};
 

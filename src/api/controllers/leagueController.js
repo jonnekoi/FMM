@@ -1,7 +1,7 @@
 import {
   postLeague,
   fetchUserLeagues,
-  postUserToLeague, getLeagueByCode, isUserInLeague,
+  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues
 } from '../models/leagueModel.js';
 
 const addLeague = async (req, res) => {
@@ -16,14 +16,14 @@ const addLeague = async (req, res) => {
       name: req.body.name,
       isPublic: req.body.isPublic,
       owner: res.locals.user.id,
-      maxPlayers: req.body.maxPlayers
+      maxPlayers: req.body.maxPlayers,
+      desci: req.body.desci
     };
 
     if (req.body.isPublic !== 1) {
       data.leagueKey = req.body.leagueKey;
     }
     const response = await postLeague(data);
-    console.log(response);
     if (response.status === 409) {
       return res.status(409).json({ message: 'Name or key already exist' });
     } else if (response.status === 201) {
@@ -69,4 +69,14 @@ const addUserToLeague = async (req, res) => {
   }
 }
 
-export {addLeague, getUserLeagues, addUserToLeague};
+const getPublicLeagues = async (req, res) => {
+  try {
+    const leagues = await fetchPublicLeagues();
+    res.status(200).json(leagues);
+  } catch (error) {
+    console.error('Error fetching public leagues:', error);
+    res.status(500).json({ message: 'Failed to fetch public leagues' });
+  }
+}
+
+export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues};

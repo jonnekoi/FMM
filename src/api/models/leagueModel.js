@@ -43,7 +43,7 @@ const fetchUserLeagues = async (user) => {
     const [result] = await promisePool.execute(sql, [user]);
     return result;
   } catch (error) {
-    console.log("tässä" + error);
+    console.log(error);
   }
 }
 
@@ -72,6 +72,18 @@ const postUserToLeague = async (data) => {
   }
 }
 
+const postUserToPublicLeague = async (data) => {
+    try {
+        const sql = `INSERT INTO userleagues (user_id, league_id) VALUES (?, ?)`;
+        const params = [data.user_id, data.league_id];
+        await promisePool.execute(sql, params);
+        return { message: "User added" };
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 const isUserInLeague = async (user_id, league_id) => {
   try {
     const sql = `SELECT * FROM userleagues WHERE user_id = ? AND league_id = ?`;
@@ -94,5 +106,5 @@ const getLeagueByCode = async (code) => {
 }
 
 
-export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues};
+export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague};
 

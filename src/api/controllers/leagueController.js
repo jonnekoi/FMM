@@ -1,7 +1,7 @@
 import {
   postLeague,
   fetchUserLeagues,
-  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues
+  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague
 } from '../models/leagueModel.js';
 
 const addLeague = async (req, res) => {
@@ -69,6 +69,29 @@ const addUserToLeague = async (req, res) => {
   }
 }
 
+const addUserToPublicLeague = async (req, res) => {
+  try {
+    const leagueId = req.params.id;
+    const userId = res.locals.user.id;
+
+    const existingUser = await isUserInLeague(userId, leagueId);
+    if (existingUser.length > 0) {
+      return res.status(409).json({ message: 'User is already in the league' });
+    }
+
+    const data = {
+      user_id: userId,
+      league_id: leagueId
+    };
+    const response = await postUserToPublicLeague(data);
+    res.status(201).json(response);
+  } catch (error) {
+    console.error('Error adding user to public league:', error);
+    res.status(400).json({ message: error.message });
+  }
+}
+
+
 const getPublicLeagues = async (req, res) => {
   try {
     const leagues = await fetchPublicLeagues();
@@ -79,4 +102,4 @@ const getPublicLeagues = async (req, res) => {
   }
 }
 
-export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues};
+export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague};

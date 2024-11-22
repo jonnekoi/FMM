@@ -75,6 +75,19 @@ create table users
     email    text null
 );
 
+create table leagues
+(
+    id         int auto_increment
+        primary key,
+    name       varchar(255) not null,
+    isPublic   tinyint(1)   not null,
+    owner      int          null,
+    maxPlayers int          null,
+    leagueKey  varchar(255) null,
+    constraint leagues_ibfk_1
+        foreign key (owner) references users (id)
+);
+
 create table matchguesses
 (
     guess_id int auto_increment
@@ -107,6 +120,20 @@ create table points
 
 create index user_id
     on points (user_id);
+
+create table userleagues
+(
+    id        int auto_increment
+        primary key,
+    user_id   int not null,
+    league_id int not null,
+    constraint userLeagues_ibfk_1
+        foreign key (user_id) references users (id),
+    constraint userLeagues_ibfk_2
+        foreign key (league_id) references leagues (id)
+);
+
+
 
 
 ```

@@ -11,8 +11,8 @@ git clone https://github.com/jonnekoi/FMM.git
 npm install
 ```
 
-**3. Follow the steps and create database
-After database start the app
+**3. Follow the steps and create database,
+After database start the app**
 ```sh
 npm run nodemon
 ```

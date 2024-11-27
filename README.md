@@ -84,6 +84,9 @@ create table leagues
     owner      int          null,
     maxPlayers int          null,
     leagueKey  varchar(255) null,
+    StartDate  date         null,
+    EndDate    date         null,
+    desci      text         null,
     constraint leagues_ibfk_1
         foreign key (owner) references users (id)
 );
@@ -110,10 +113,13 @@ create index user_id
 
 create table points
 (
-    id      int auto_increment
+    id        int auto_increment
         primary key,
-    user_id int null,
-    points  int not null,
+    user_id   int null,
+    points    int not null,
+    league_id int null,
+    constraint fk_league_id
+        foreign key (league_id) references leagues (id),
     constraint points_ibfk_1
         foreign key (user_id) references users (id)
 );
@@ -132,10 +138,6 @@ create table userleagues
     constraint userLeagues_ibfk_2
         foreign key (league_id) references leagues (id)
 );
-
-
-
-
 ```
 **4. Create .env file**
 

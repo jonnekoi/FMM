@@ -5,7 +5,7 @@ import {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToP
 const leagueRouter = express.Router();
 
 leagueRouter.route("/").post(authToken, addLeague).get(authToken, getUserLeagues);
-leagueRouter.route("/public").get(getPublicLeagues);
+leagueRouter.route("/public").get(authToken, getPublicLeagues);
 leagueRouter.route("/:code").post(authToken, addUserToLeague);
 leagueRouter.route("/add/:id").post(authToken, addUserToPublicLeague)
 leagueRouter.route("/info/:id").get(authToken, getLeagueData);

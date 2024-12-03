@@ -47,13 +47,14 @@ const fetchUserLeagues = async (user) => {
   }
 }
 
-const fetchPublicLeagues = async () => {
+const fetchPublicLeagues = async (userId) => {
   try {
     const sql = `SELECT leagues.id, leagues.name, leagues.desci, users.username AS owner_username, leagues.maxPlayers
-                        FROM leagues
-                        JOIN users ON leagues.owner = users.id
-                        WHERE leagues.isPublic = 1;`;
-    const [result] = await promisePool.execute(sql);
+                 FROM leagues
+                 JOIN users ON leagues.owner = users.id
+                 LEFT JOIN userleagues ON leagues.id = userleagues.league_id AND userleagues.user_id = ?
+                 WHERE leagues.isPublic = 1 AND userleagues.user_id IS NULL;`;
+    const [result] = await promisePool.execute(sql, [userId]);
     return result;
   } catch (error) {
     console.log(error);

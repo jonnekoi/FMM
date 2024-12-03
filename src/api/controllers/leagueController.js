@@ -107,7 +107,7 @@ const addUserToPublicLeague = async (req, res) => {
 
 const getPublicLeagues = async (req, res) => {
   try {
-    const leagues = await fetchPublicLeagues();
+    const leagues = await fetchPublicLeagues(res.locals.user.id);
     res.status(200).json(leagues);
   } catch (error) {
     console.error('Error fetching public leagues:', error);

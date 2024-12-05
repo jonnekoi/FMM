@@ -36,11 +36,13 @@ const getSingleMatch = async (req, res) => {
 }
 
 const addGuess = async (req, res) => {
+  console.log(req.body);
+  const pick = req.body.home_score + "-" + req.body.away_score;
   try {
     const data = {
-      match_id: req.params.id,
+      match_id: req.body.match_id,
       user_id: res.locals.user.id,
-      guess: req.body.guess,
+      guess: pick,
       scorer: req.body.scorer,
     };
 

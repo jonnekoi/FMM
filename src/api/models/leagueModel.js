@@ -127,9 +127,14 @@ const fetchLeagueData = async (leagueId) => {
   } catch (error) {
     console.log(error);
   }
-
 }
 
+const postLeagueName = async (data) => {
+  const { name } = data;
+  const sql = "INSERT INTO leagueNames (league_name) VALUES (?)";
+  const [result] = await promisePool.execute(sql, [name]);
+  return result;
+};
 
-export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData};
+export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData, postLeagueName};
 

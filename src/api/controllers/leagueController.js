@@ -1,7 +1,7 @@
 import {
   postLeague,
   fetchUserLeagues,
-  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData
+  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData, postLeagueName
 } from '../models/leagueModel.js';
 
 const addLeague = async (req, res) => {
@@ -96,6 +96,7 @@ const addUserToPublicLeague = async (req, res) => {
       user_id: userId,
       league_id: leagueId
     };
+    console.log("meneekö tähän?");
     const response = await postUserToPublicLeague(data);
     res.status(201).json(response);
   } catch (error) {
@@ -127,4 +128,17 @@ const getLeagueData = async (req, res) => {
   }
 }
 
-export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague, getLeagueData};
+const addLeagueName = async (req, res) => {
+  try {
+    const data = {
+      name: req.body.leaguename,
+    };
+    const response = await postLeagueName(data);
+    res.status(201).send(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Error adding leaguename' });
+  }
+}
+
+export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague, getLeagueData, addLeagueName};

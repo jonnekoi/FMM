@@ -1,7 +1,7 @@
 import {
   postLeague,
   fetchUserLeagues,
-  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData, postLeagueName
+  postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData, postLeagueName, fetchLeagueNames
 } from '../models/leagueModel.js';
 
 const addLeague = async (req, res) => {
@@ -30,7 +30,8 @@ const addLeague = async (req, res) => {
       maxPlayers: req.body.maxPlayers,
       desci: req.body.desci,
       StartDate: startDate,
-      EndDate: endDate
+      EndDate: endDate,
+      baseLeague: req.body.baseLeague
     };
 
     if (req.body.isPublic !== 1) {
@@ -141,4 +142,14 @@ const addLeagueName = async (req, res) => {
   }
 }
 
-export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague, getLeagueData, addLeagueName};
+const getAllLeagueNames = async (req, res) => {
+  try {
+    const leagues = await fetchLeagueNames();
+    res.status(200).send(leagues);
+  } catch (error) {
+    console.error("error fetching leaguenames", error);
+    res.status(500).send({ message: 'Error fetching leaguenames'});
+  }
+}
+
+export {addLeague, getUserLeagues, addUserToLeague, getPublicLeagues, addUserToPublicLeague, getLeagueData, addLeagueName, getAllLeagueNames};

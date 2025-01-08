@@ -16,6 +16,7 @@ const addMatch = async (req, res) => {
       matchday: req.body.matchday,
       home_team: req.body.home_team,
       away_team: req.body.away_team,
+      inLeague: req.body.league_name,
     };
     const response = await postMatch(data);
     res.status(201).json(response);

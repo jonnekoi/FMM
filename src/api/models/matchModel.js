@@ -25,9 +25,9 @@ const fetchMatches = async () => {
 
 const postMatch = async (match) => {
   try {
-    const { matchday, home_team, away_team } = match;
-    const sql = `INSERT INTO matches (matchday, home_team, away_team) VALUES (?, ?, ?)`;
-    const params = [matchday, home_team, away_team];
+    const { matchday, home_team, away_team, inLeague } = match;
+    const sql = `INSERT INTO matches (matchday, home_team, away_team, inLeague) VALUES (?, ?, ?, ?)`;
+    const params = [matchday, home_team, away_team, inLeague];
     const [result] = await promisePool.execute(sql, params);
     return { id: result.insertId };
   } catch (error) {

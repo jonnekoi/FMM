@@ -1,6 +1,6 @@
 import express from "express";
 import authToken from '../../middlewares.js';
-import {addLeagueName} from '../controllers/leagueController.js';
+import {addLeagueName, getAllLeagueNames} from '../controllers/leagueController.js';
 
 const isAdmin = (req, res, next) => {
   if (res.locals.user.access === "admin") {
@@ -13,6 +13,7 @@ const isAdmin = (req, res, next) => {
 const leagueNameRouter = express.Router();
 
 leagueNameRouter.route("/add/name").post(authToken, isAdmin, addLeagueName);
+leagueNameRouter.route('/').get(getAllLeagueNames);
 
 
 export default leagueNameRouter;

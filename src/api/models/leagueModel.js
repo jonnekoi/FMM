@@ -18,10 +18,10 @@ const postLeague = async (data) => {
   }
 
   try {
-    const { name, isPublic, owner, maxPlayers, desci, StartDate, EndDate } = data;
+    const { name, isPublic, owner, maxPlayers, desci, StartDate, EndDate, baseLeague } = data;
     const leagueKey = data.isPublic === 1 ? null : data.leagueKey;
-    const sql = `INSERT INTO leagues (name, isPublic, owner, maxPlayers, leagueKey, desci, StartDate, EndDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    const params = [name, isPublic, owner, maxPlayers, leagueKey, desci, StartDate, EndDate];
+    const sql = `INSERT INTO leagues (name, isPublic, owner, maxPlayers, leagueKey, desci, StartDate, EndDate, baseLeague) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const params = [name, isPublic, owner, maxPlayers, leagueKey, desci, StartDate, EndDate, baseLeague];
     const [result] = await promisePool.execute(sql, params);
     const leagueId = result.insertId;
     const userLeagueSql = `INSERT INTO userleagues (user_id, league_id) VALUES (?, ?)`;
@@ -114,7 +114,7 @@ const fetchLeagueData = async (leagueId) => {
                      FROM matches
                      LEFT JOIN teams AS home_team ON matches.home_team = home_team.id
                      LEFT JOIN teams AS away_team ON matches.away_team = away_team.id
-                     WHERE matches.matchday > leagues.StartDate) AS league_matches
+                     WHERE matches.matchday > leagues.StartDate AND matches.inLeague = leagues.baseLeague) AS league_matches
                      FROM leagues
                      JOIN users AS owner ON leagues.owner = owner.id
                      JOIN userleagues ON leagues.id = userleagues.league_id
@@ -136,5 +136,10 @@ const postLeagueName = async (data) => {
   return result;
 };
 
-export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData, postLeagueName};
+const fetchLeagueNames = async () => {
+  const [rows] = await promisePool.query("SELECT * FROM leaguenames");
+  return rows;
+}
+
+export {postLeague, fetchUserLeagues, postUserToLeague, getLeagueByCode, isUserInLeague, fetchPublicLeagues, postUserToPublicLeague, fetchLeagueData, postLeagueName, fetchLeagueNames};
 

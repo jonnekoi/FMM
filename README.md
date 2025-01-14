@@ -32,6 +32,25 @@ use fmm;
 
 **3. Create needed tables**
 ```sh
+-- we don't know how to generate root <with-no-name> (class Root) :(
+
+grant insert, select, update on currency.* to appuser@localhost;
+
+grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@'127.0.0.1';
+
+grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@'::1';
+
+grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@'desktop-pfsddjr';
+
+grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@localhost;
+
+create table leaguenames
+(
+    id          int auto_increment
+        primary key,
+    league_name varchar(255) not null
+);
+
 create table teams
 (
     id        int auto_increment
@@ -48,6 +67,9 @@ create table matches
     away_team  int      not null,
     home_score int      null,
     away_score int      null,
+    inLeague   int      null,
+    constraint fk_inLeague
+        foreign key (inLeague) references leaguenames (id),
     constraint matches_ibfk_1
         foreign key (home_team) references teams (id),
     constraint matches_ibfk_2
@@ -87,6 +109,9 @@ create table leagues
     StartDate  date         null,
     EndDate    date         null,
     desci      text         null,
+    baseLeague int          not null,
+    constraint fk_baseleague
+        foreign key (baseLeague) references leaguenames (id),
     constraint leagues_ibfk_1
         foreign key (owner) references users (id)
 );
@@ -138,6 +163,8 @@ create table userleagues
     constraint userLeagues_ibfk_2
         foreign key (league_id) references leagues (id)
 );
+
+
 ```
 **4. Create .env file**
 

@@ -32,18 +32,6 @@ use fmm;
 
 **3. Create needed tables**
 ```sh
--- we don't know how to generate root <with-no-name> (class Root) :(
-
-grant insert, select, update on currency.* to appuser@localhost;
-
-grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@'127.0.0.1';
-
-grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@'::1';
-
-grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@'desktop-pfsddjr';
-
-grant alter, alter routine, binlog admin, binlog monitor, binlog replay, connection admin, create, create routine, create tablespace, create temporary tables, create user, create view, delete, delete history, drop, event, execute, federated admin, file, index, insert, lock tables, process, read_only admin, references, reload, replication master admin, replication slave, replication slave admin, select, set user, show databases, show view, shutdown, slave monitor, super, trigger, update, grant option on *.* to root@localhost;
-
 create table leaguenames
 (
     id          int auto_increment

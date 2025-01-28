@@ -23,6 +23,6 @@ const isAdmin = (req, res, next) => {
 matchRouter.route('/').get(getMatches).post(authToken, isAdmin, addMatch);
 matchRouter.route('/:id').get(authToken, getSingleMatch);
 matchRouter.route('/guess/:id').post(authToken, addGuess);
-matchRouter.route('/:id/guess/:userId').get(authToken, getUserGuess);
+matchRouter.route('/guess/score/:id').get(authToken, getUserGuess);
 
 export default matchRouter;

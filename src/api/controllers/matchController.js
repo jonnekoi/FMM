@@ -37,13 +37,12 @@ const getSingleMatch = async (req, res) => {
 }
 
 const addGuess = async (req, res) => {
-  console.log(req.body);
-  const pick = req.body.home_score + "-" + req.body.away_score;
   try {
     const data = {
       match_id: req.body.match_id,
       user_id: res.locals.user.id,
-      guess: pick,
+      home_score_guess: req.body.home_score,
+      away_score_guess: req.body.away_score,
       scorer: req.body.scorer,
     };
 
@@ -65,7 +64,9 @@ const addGuess = async (req, res) => {
 
 const getUserGuess = async (req, res) => {
   try {
-    const guess = await fetchUserGuess(req.params.id, req.params.userId);
+    const userId = res.locals.user.id;
+    console.log("MENEEKÄ TÄHÄN?", userId)
+    const guess = await fetchUserGuess(req.params.id, userId);
     res.status(200).json(guess);
   } catch (error) {
     console.error('Error fetching guess:', error);

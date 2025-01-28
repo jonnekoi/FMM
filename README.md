@@ -32,6 +32,13 @@ use fmm;
 
 **3. Create needed tables**
 ```sh
+create table leaguenames
+(
+    id          int auto_increment
+        primary key,
+    league_name varchar(255) not null
+);
+
 create table teams
 (
     id        int auto_increment
@@ -48,6 +55,9 @@ create table matches
     away_team  int      not null,
     home_score int      null,
     away_score int      null,
+    inLeague   int      null,
+    constraint fk_inLeague
+        foreign key (inLeague) references leaguenames (id),
     constraint matches_ibfk_1
         foreign key (home_team) references teams (id),
     constraint matches_ibfk_2
@@ -87,6 +97,9 @@ create table leagues
     StartDate  date         null,
     EndDate    date         null,
     desci      text         null,
+    baseLeague int          not null,
+    constraint fk_baseleague
+        foreign key (baseLeague) references leaguenames (id),
     constraint leagues_ibfk_1
         foreign key (owner) references users (id)
 );
@@ -138,6 +151,8 @@ create table userleagues
     constraint userLeagues_ibfk_2
         foreign key (league_id) references leagues (id)
 );
+
+
 ```
 **4. Create .env file**
 

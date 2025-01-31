@@ -1,4 +1,4 @@
-import {fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess, fetchTeamStats} from '../models/matchModel.js';
+import {fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess, fetchTeamStats, postResult} from '../models/matchModel.js';
 
 const getMatches = async (req, res) => {
   try {
@@ -84,4 +84,19 @@ const getTeamStats = async (req, res) => {
   }
 }
 
-export { getMatches, addMatch, getSingleMatch, addGuess, getUserGuess, getTeamStats };
+const addResult = async (req, res) => {
+  try {
+    const matchId = req.params.id;
+    const data = {
+      home_score: req.body.home_score,
+      away_score: req.body.away_score
+    }
+    await postResult(matchId, data);
+    res.status(200);
+  } catch (error) {
+    console.log(error);
+    res.status(500)({message: "error adding result"});
+  }
+}
+
+export { getMatches, addMatch, getSingleMatch, addGuess, getUserGuess, getTeamStats, addResult };

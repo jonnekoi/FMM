@@ -121,7 +121,10 @@ const fetchTeamStats = async (matchId) => {
         SUM(CASE WHEN m.home_team = t.id THEN m.away_score ELSE 0 END) + SUM(CASE WHEN m.away_team = t.id THEN m.home_score ELSE 0 END) AS goals_conceded,
         SUM(CASE WHEN (m.home_team = t.id AND m.home_score > m.away_score) OR (m.away_team = t.id AND m.away_score > m.home_score) THEN 1 ELSE 0 END) AS wins,
         SUM(CASE WHEN (m.home_team = t.id AND m.home_score < m.away_score) OR (m.away_team = t.id AND m.away_score < m.home_score) THEN 1 ELSE 0 END) AS losses,
-        SUM(CASE WHEN m.home_score = m.away_score THEN 1 ELSE 0 END) AS ties
+        SUM(CASE WHEN m.home_score = m.away_score THEN 1 ELSE 0 END) AS ties,
+        SUM(CASE WHEN m.home_team = t.id THEN m.home_xG ELSE 0 END) + SUM(CASE WHEN m.away_team = t.id THEN m.away_xG ELSE 0 END) AS total_xG,
+        SUM(CASE WHEN m.home_team = t.id THEN m.home_xG ELSE 0 END) AS home_xG,
+        SUM(CASE WHEN m.away_team = t.id THEN m.away_xG ELSE 0 END) AS away_xG
       FROM matches m
       JOIN teams t ON t.id IN (m.home_team, m.away_team)
       WHERE t.id IN (?, ?)
@@ -141,4 +144,17 @@ const fetchTeamStats = async (matchId) => {
   }
 }
 
-export { fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess, fetchTeamStats };
+const postResult = async(matchid, data) => {
+  try {
+    const { home_score, away_score} = data;
+    const id = matchid;
+    const updateSql = `UPDATE matches SET home_score = ?, away_score = ? WHERE id = ?`;
+    const updateParams = [home_score, away_score, id];
+    await promisePool.execute(updateSql, updateParams);
+    return { message: 'Score updated successfully' };
+  } catch (error){
+    console.log(error);
+  }
+}
+
+export { fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess, fetchTeamStats, postResult };

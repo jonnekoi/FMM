@@ -6,7 +6,8 @@ import {
   getMatches,
   getSingleMatch,
   addGuess,
-  getUserGuess
+  getUserGuess,
+  getTeamStats
 } from '../controllers/matchController.js';
 import authToken from '../../middlewares.js';
 
@@ -22,6 +23,7 @@ const isAdmin = (req, res, next) => {
 
 matchRouter.route('/').get(getMatches).post(authToken, isAdmin, addMatch);
 matchRouter.route('/:id').get(authToken, getSingleMatch);
+matchRouter.route('/stats/:id').get(authToken, getTeamStats);
 matchRouter.route('/guess/:id').post(authToken, addGuess);
 matchRouter.route('/guess/score/:id').get(authToken, getUserGuess);
 

@@ -101,7 +101,44 @@ const fetchUserGuess = async (matchId, userId) => {
   } catch (error) {
     console.error('Error fetching user guess:', error);
   }
-
 }
 
-export { fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess };
+const fetchTeamStats = async (matchId) => {
+  try {
+    const matchQuery = `
+      SELECT home_team, away_team
+      FROM matches
+      WHERE id = ?
+    `;
+    const [matchRows] = await promisePool.query(matchQuery, [matchId]);
+    const { home_team, away_team } = matchRows[0];
+
+    const statsQuery = `
+      SELECT
+        t.id AS team_id,
+        t.team_name,
+        SUM(CASE WHEN m.home_team = t.id THEN m.home_score ELSE 0 END) + SUM(CASE WHEN m.away_team = t.id THEN m.away_score ELSE 0 END) AS goals_scored,
+        SUM(CASE WHEN m.home_team = t.id THEN m.away_score ELSE 0 END) + SUM(CASE WHEN m.away_team = t.id THEN m.home_score ELSE 0 END) AS goals_conceded,
+        SUM(CASE WHEN (m.home_team = t.id AND m.home_score > m.away_score) OR (m.away_team = t.id AND m.away_score > m.home_score) THEN 1 ELSE 0 END) AS wins,
+        SUM(CASE WHEN (m.home_team = t.id AND m.home_score < m.away_score) OR (m.away_team = t.id AND m.away_score < m.home_score) THEN 1 ELSE 0 END) AS losses,
+        SUM(CASE WHEN m.home_score = m.away_score THEN 1 ELSE 0 END) AS ties
+      FROM matches m
+      JOIN teams t ON t.id IN (m.home_team, m.away_team)
+      WHERE t.id IN (?, ?)
+      GROUP BY t.id, t.team_name
+    `;
+    const [statsRows] = await promisePool.query(statsQuery, [home_team, away_team]);
+
+    const sortedStats = statsRows.sort((a, b) => {
+      if (a.team_id === home_team) return -1;
+      if (b.team_id === home_team) return 1;
+      return 0;
+    });
+
+    return sortedStats;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export { fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess, fetchTeamStats };

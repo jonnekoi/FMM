@@ -1,4 +1,4 @@
-import {fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess} from '../models/matchModel.js';
+import {fetchMatches, postMatch, fetchMatch, postGuess, fetchUserGuess, fetchTeamStats} from '../models/matchModel.js';
 
 const getMatches = async (req, res) => {
   try {
@@ -65,7 +65,6 @@ const addGuess = async (req, res) => {
 const getUserGuess = async (req, res) => {
   try {
     const userId = res.locals.user.id;
-    console.log("MENEEKÄ TÄHÄN?", userId)
     const guess = await fetchUserGuess(req.params.id, userId);
     res.status(200).json(guess);
   } catch (error) {
@@ -74,4 +73,15 @@ const getUserGuess = async (req, res) => {
   }
 }
 
-export { getMatches, addMatch, getSingleMatch, addGuess, getUserGuess };
+const getTeamStats = async (req, res) => {
+  try {
+    const matchId = req.params.id;
+    const stats = await fetchTeamStats(matchId);
+    res.status(200).json(stats);
+  } catch(error){
+    console.log("Error getting stats", error);
+    res.status(500)({message: "Failed to fetch team stats"})
+  }
+}
+
+export { getMatches, addMatch, getSingleMatch, addGuess, getUserGuess, getTeamStats };

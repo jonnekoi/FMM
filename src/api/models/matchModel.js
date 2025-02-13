@@ -141,15 +141,50 @@ const fetchTeamStats = async (matchId) => {
   }
 }
 
-const postResult = async(matchid, data) => {
+const postResult = async (matchId, data) => {
   try {
-    const { home_score, away_score} = data;
-    const id = matchid;
+    const { home_score, away_score } = data;
     const updateSql = `UPDATE matches SET home_score = ?, away_score = ? WHERE id = ?`;
-    const updateParams = [home_score, away_score, id];
+    const updateParams = [home_score, away_score, matchId];
     await promisePool.execute(updateSql, updateParams);
-    return { message: 'Score updated successfully' };
-  } catch (error){
+
+    const guessesQuery = `SELECT user_id, home_score_guess, away_score_guess FROM matchguesses WHERE match_id = ?`;
+    const [guesses] = await promisePool.query(guessesQuery, [matchId]);
+
+    for (const guess of guesses) {
+      const guessedHomeScore = Number(guess.home_score_guess);
+      const guessedAwayScore = Number(guess.away_score_guess);
+      const actualHomeScore = Number(home_score);
+      const actualAwayScore = Number(away_score);
+      let points = 0;
+      if (actualHomeScore === guessedHomeScore && actualAwayScore === guessedAwayScore) {
+        points = 5;
+      }
+      else if (
+          (actualHomeScore > actualAwayScore && guessedHomeScore > guessedAwayScore) ||
+          (actualHomeScore < actualAwayScore && guessedHomeScore < guessedAwayScore) ||
+          (actualHomeScore === actualAwayScore && guessedHomeScore === guessedAwayScore)
+      ) {
+        points = 3;
+      }
+
+
+      if (points > 0) {
+        const checkQuery = `SELECT COUNT(*) AS count FROM points WHERE user_id = ?`;
+        const [rows] = await promisePool.query(checkQuery, [guess.user_id]);
+
+        if (rows[0].count > 0) {
+          const updateQuery = `UPDATE points SET points = points + ? WHERE user_id = ?`;
+          await promisePool.execute(updateQuery, [points, guess.user_id]);
+        } else {
+          const insertQuery = `INSERT INTO points (user_id, points) VALUES (?, ?)`;
+          await promisePool.execute(insertQuery, [guess.user_id, points]);
+        }
+      }
+    }
+
+    return { message: 'Score and points updated successfully' };
+  } catch (error) {
     console.log(error);
   }
 }

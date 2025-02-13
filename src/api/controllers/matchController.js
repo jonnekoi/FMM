@@ -92,10 +92,10 @@ const addResult = async (req, res) => {
       away_score: req.body.away_score
     }
     await postResult(matchId, data);
-    res.status(200);
+    res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    res.status(500)({message: "error adding result"});
+    res.sendStatus(500)({message: "error adding result"});
   }
 }
 

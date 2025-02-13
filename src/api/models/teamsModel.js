@@ -5,6 +5,7 @@ const fetchTeams = async () => {
   return rows;
 }
 
+
 const postTeam = async (data) => {
   const { name } = data;
   const sql = "INSERT INTO teams (team_name) VALUES (?)";

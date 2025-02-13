@@ -32,21 +32,21 @@ use fmm;
 
 **3. Create needed tables**
 ```sh
-create table leaguenames
+create or replace table leaguenames
 (
     id          int auto_increment
         primary key,
     league_name varchar(255) not null
 );
 
-create table teams
+create or replace table teams
 (
     id        int auto_increment
         primary key,
     team_name varchar(255) not null
 );
 
-create table matches
+create or replace table matches
 (
     id         int auto_increment
         primary key,
@@ -64,7 +64,7 @@ create table matches
         foreign key (away_team) references teams (id)
 );
 
-create table players
+create or replace table players
 (
     id      int auto_increment
         primary key,
@@ -74,7 +74,7 @@ create table players
         foreign key (team_id) references teams (id)
 );
 
-create table users
+create or replace table users
 (
     id       int auto_increment
         primary key,
@@ -85,7 +85,7 @@ create table users
     email    text null
 );
 
-create table leagues
+create or replace table leagues
 (
     id         int auto_increment
         primary key,
@@ -104,27 +104,28 @@ create table leagues
         foreign key (owner) references users (id)
 );
 
-create table matchguesses
+create or replace table matchguesses
 (
-    guess_id int auto_increment
+    guess_id         int auto_increment
         primary key,
-    user_id  int        null,
-    match_id int        null,
-    guess    varchar(5) null,
-    scorer   int        null,
+    user_id          int null,
+    match_id         int null,
+    home_score_guess int null,
+    scorer           int null,
+    away_score_guess int null,
     constraint matchguesses_ibfk_1
         foreign key (user_id) references users (id),
     constraint matchguesses_ibfk_2
         foreign key (match_id) references matches (id)
 );
 
-create index match_id
+create or replace index match_id
     on matchguesses (match_id);
 
-create index user_id
+create or replace index user_id
     on matchguesses (user_id);
 
-create table points
+create or replace table points
 (
     id        int auto_increment
         primary key,
@@ -137,10 +138,10 @@ create table points
         foreign key (user_id) references users (id)
 );
 
-create index user_id
+create or replace index user_id
     on points (user_id);
 
-create table userleagues
+create or replace table userleagues
 (
     id        int auto_increment
         primary key,
